@@ -184,7 +184,6 @@ namespace PokeBag
                 statusBar.Text = "Upgrade Pokemon " + pokemon.PokemonId + " CP: " + pokemon.Cp + " IV: " + (int)PokemonInfo.CalculatePokemonPerfection(pokemon) +
                     " Move1: " + pokemon.Move1 + " Move2 " + pokemon.Move2 + " Success! New Pokemon " + new_pokemon.PokemonId + " CP: " + new_pokemon.Cp + "  IV: " + PokemonInfo.CalculatePokemonPerfection(new_pokemon) +
                     " Move1: " + new_pokemon.Move1 + " Move2 " + new_pokemon.Move2;
-                ((Button)sender).IsEnabled = false;
             }
             else
             {
