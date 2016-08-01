@@ -177,7 +177,7 @@ namespace PokeBag
             }
             PokemonData pokemon = (PokemonData)((Button)sender).Tag;
             statusBar.Text = "Upgrade Pokemon " + pokemon.PokemonId + " CP: " + pokemon.Cp + " IV: " + (int)PokemonInfo.CalculatePokemonPerfection(pokemon) + " Move1: " + pokemon.Move1 + " Move2 " + pokemon.Move2 + " ...";
-            var new_pokemon = await logic.EvolvePokemon(pokemon.Id);
+            var new_pokemon = await logic.UpgradePokemon(pokemon.Id);
             if (new_pokemon != null)
             {
                 // pokeBag.ItemsSource = await GetPokemonInBag();
