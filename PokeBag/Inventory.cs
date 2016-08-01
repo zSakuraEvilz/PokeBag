@@ -35,7 +35,7 @@ namespace PokeBag
            
         }
 
-        public async Task<int[]> GetRequiredCandy(List<PokemonSettings> pokemonSettings, Candy[] pokemonFamilies, PokemonId pokemon)
+        public async Task<int[]> GetEvolveRequiredCandy(List<PokemonSettings> pokemonSettings, Candy[] pokemonFamilies, PokemonId pokemon)
         {
             try
             {
@@ -49,6 +49,22 @@ namespace PokeBag
             }
            
         }
+
+        public async Task<int[]> GetUpgradeRequiredCandy(List<PokemonSettings> pokemonSettings, Candy[] pokemonFamilies, PokemonId pokemon)
+        {
+            try
+            {
+                var settings = pokemonSettings.Single(x => x.PokemonId == pokemon);
+                var familyCandy = pokemonFamilies.Single(x => settings.FamilyId == x.FamilyId);
+                return new[] { familyCandy.Candy_, settings.EvolutionPips };
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+        }
+
 
         public async Task<IEnumerable<Candy>> GetPokemonFamilies()
         {

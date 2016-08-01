@@ -6,6 +6,7 @@ namespace PokeBag
     public class Pokemon
     {
         public Pokemon() { }
+        public string Image { get; set; }
         public ulong Id { get; set; }
         public PokemonId PokemonId { get; set; }
         public int Cp { get; set; }
@@ -17,7 +18,8 @@ namespace PokeBag
         public int Toal { get; set; }
         public PokemonMove Move1 { get; set; }
         public PokemonMove Move2 { get; set; }
-        public string Candies { get; set; }
+        public string EvolveRequiredCandy { get; set; }
+        public string UpgradeRequiredCandy { get; set; }
         public PokemonData Tag { get; set; }
     }
 }

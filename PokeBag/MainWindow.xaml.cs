@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace PokeBag
 {
@@ -73,6 +74,7 @@ namespace PokeBag
                 foreach (var pokemonData in pokemonDatas)
                 {
                     pokemon = new Pokemon();
+                    pokemon.Image = string.Format("Resources/{0}.png", pokemonData.PokemonId);
                     pokemon.Id = pokemonData.Id;
                     pokemon.PokemonId = pokemonData.PokemonId;
                     pokemon.Cp = pokemonData.Cp;
@@ -84,11 +86,17 @@ namespace PokeBag
                     pokemon.Toal = pokemonData.IndividualStamina + pokemonData.IndividualAttack + pokemonData.IndividualDefense;
                     pokemon.Move1 = pokemonData.Move1;
                     pokemon.Move2 = pokemonData.Move2;
-                    int[] candy = await logic._inventory.GetRequiredCandy(pokemonSettings, pokemonFamilies, pokemon.PokemonId);
+                    int[] candy = await logic._inventory.GetEvolveRequiredCandy(pokemonSettings, pokemonFamilies, pokemon.PokemonId);
                     if (candy[1] == 0) // fully evolved
-                        pokemon.Candies = string.Format("0", candy[0], candy[1]);
+                        pokemon.EvolveRequiredCandy = string.Format("0", candy[0], candy[1]);
                     else
-                        pokemon.Candies = string.Format("{0}/{1}", candy[0], candy[1]);
+                        pokemon.EvolveRequiredCandy = string.Format("{0}/{1}", candy[0], candy[1]);
+                    //candy = await logic._inventory.GetUpgradeRequiredCandy(pokemonSettings, pokemonFamilies, pokemon.PokemonId);
+                    //if (candy[1] == 0) // fully evolved
+                    //    pokemon.UpgradeRequiredCandy = string.Format("0", candy[0], candy[1]);
+                    //else
+                    //    pokemon.UpgradeRequiredCandy = string.Format("{0}/{1}", candy[0], candy[1]);
+                    
                     pokemon.Tag = pokemonData;
                     pokemons.Add(pokemon);
                 }
@@ -113,11 +121,13 @@ namespace PokeBag
             var new_pokemon = await logic.EvolvePokemon(pokemon.Id);
             if(new_pokemon != null)
             {
-                pokeBag.ItemsSource = await GetPokemonInBag();
+               // pokeBag.ItemsSource = await GetPokemonInBag();
                 statusBar.Text = "Evolve Pokemon " + pokemon.PokemonId + " CP: " + pokemon.Cp + " IV: " + (int)PokemonInfo.CalculatePokemonPerfection(pokemon) +
                     " Move1: " + pokemon.Move1 + " Move2 " + pokemon.Move2 + " Success! New Pokemon " + new_pokemon.PokemonId +" CP: " + new_pokemon.Cp + "  IV: " + PokemonInfo.CalculatePokemonPerfection(new_pokemon) +
                     " Move1: " + new_pokemon.Move1 + " Move2 " + new_pokemon.Move2 ;
-            }else
+                ((Button)sender).IsEnabled = false;
+            }
+            else
             {
                 statusBar.Text = "Evolve Failed!";
             }
@@ -139,9 +149,11 @@ namespace PokeBag
             var new_pokemon = await logic.TransferPokemon(pokemon.Id);
             if (new_pokemon == true)
             {
-                pokeBag.ItemsSource = await GetPokemonInBag();
+                //pokeBag.ItemsSource = await GetPokemonInBag();
+              
                 statusBar.Text = "Transfer Pokemon " + pokemon.PokemonId + " CP: " + pokemon.Cp + " IV: " + (int)PokemonInfo.CalculatePokemonPerfection(pokemon) +
                     " Move1: " + pokemon.Move1 + " Move2 " + pokemon.Move2 + " Success!";
+                ((Button)sender).IsEnabled = false;
             }
             else
             {
@@ -151,6 +163,33 @@ namespace PokeBag
 
         private void pokeBag_Sorting(object sender, DataGridSortingEventArgs e)
         {
-            var a = sender;        }
+            var a = sender;
+        }
+
+        private async void Upgrade_Click(object sender, RoutedEventArgs e)
+        {
+            if (!logic.isLogin)
+            {
+                statusBar.Text = "Is Login Account...";
+                await logic.Login();
+                playerName.Text = string.Format("Player: {0}", await logic.GetPlayerName());
+                statusBar.Text = "Login Success!";
+            }
+            PokemonData pokemon = (PokemonData)((Button)sender).Tag;
+            statusBar.Text = "Upgrade Pokemon " + pokemon.PokemonId + " CP: " + pokemon.Cp + " IV: " + (int)PokemonInfo.CalculatePokemonPerfection(pokemon) + " Move1: " + pokemon.Move1 + " Move2 " + pokemon.Move2 + " ...";
+            var new_pokemon = await logic.EvolvePokemon(pokemon.Id);
+            if (new_pokemon != null)
+            {
+                // pokeBag.ItemsSource = await GetPokemonInBag();
+                statusBar.Text = "Upgrade Pokemon " + pokemon.PokemonId + " CP: " + pokemon.Cp + " IV: " + (int)PokemonInfo.CalculatePokemonPerfection(pokemon) +
+                    " Move1: " + pokemon.Move1 + " Move2 " + pokemon.Move2 + " Success! New Pokemon " + new_pokemon.PokemonId + " CP: " + new_pokemon.Cp + "  IV: " + PokemonInfo.CalculatePokemonPerfection(new_pokemon) +
+                    " Move1: " + new_pokemon.Move1 + " Move2 " + new_pokemon.Move2;
+                ((Button)sender).IsEnabled = false;
+            }
+            else
+            {
+                statusBar.Text = "Upgrade Failed!";
+            }
+        }
     }
 }

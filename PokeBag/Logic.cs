@@ -75,6 +75,20 @@ namespace PokeBag
            
         }
 
+        public async Task<PokemonData> UpgradePokemon(ulong pokemonId)
+        {
+            try
+            {
+                var inventory = await _client.Inventory.UpgradePokemon(pokemonId);
+                return inventory.UpgradedPokemon;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+        }
+
         public async Task<string> GetPlayerName()
         {
             try
